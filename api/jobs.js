@@ -17,12 +17,13 @@ export default async function handler(request, response) {
     return response.status(405).json({ error: 'Method not allowed' });
   }
 
-  const { SUPABASE_URL, SUPABASE_SECRET_KEY } = process.env;
-  if (!SUPABASE_URL || !SUPABASE_SECRET_KEY) {
+  const supabaseUrl = process.env.SUPABASE_URL || 'https://wleggfkmtvpbcljgclzd.supabase.co';
+  const { SUPABASE_SECRET_KEY } = process.env;
+  if (!SUPABASE_SECRET_KEY) {
     return response.status(500).json({ error: 'Database configuration is missing.' });
   }
 
-  const jobsUrl = new URL('/rest/v1/jobs', SUPABASE_URL);
+  const jobsUrl = new URL('/rest/v1/jobs', supabaseUrl);
   jobsUrl.searchParams.set('select', JOB_FIELDS);
   jobsUrl.searchParams.set('order', 'pbanc_end_ymd.asc.nullslast,recrut_pblnt_sn.asc');
   jobsUrl.searchParams.set('limit', '300');
