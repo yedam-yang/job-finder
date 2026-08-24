@@ -7,25 +7,25 @@
   };
 
   const mapJob = (record) => {
-    const typeLabel = text(record.hireTypeNmLst) || text(record.recrutSeNm);
+    const typeLabel = text(record.hire_type_nm_lst) || text(record.recrut_se_nm);
     return {
-      id: String(record.recrutPblntSn),
-      c: text(record.instNm),
-      f: (text(record.instNm).slice(0, 1) || '공'),
-      color: colorFor(record.instNm),
+      id: String(record.recrut_pblnt_sn),
+      c: text(record.inst_nm),
+      f: (text(record.inst_nm).slice(0, 1) || '공'),
+      color: colorFor(record.inst_nm),
       known: '',
-      role: text(record.recrutPbancTtl),
+      role: text(record.recrut_pbanc_ttl),
       type: /인턴/.test(typeLabel) ? 'intern' : 'entry',
       typeLabel,
       pay: '',
-      due: Number(record.decimalDay),
-      dueLabel: Number.isFinite(Number(record.decimalDay)) ? `${record.decimalDay}일 후` : '',
+      due: Number(record.decimal_day),
+      dueLabel: Number.isFinite(Number(record.decimal_day)) ? `${record.decimal_day}일 후` : '',
       period: '',
-      sourceUrl: text(record.srcUrl),
-      clear: Boolean(text(record.aplyQlfcCn)),
-      eligibility: text(record.aplyQlfcCn),
-      desc: text(record.ncsCdNmLst),
-      full: text(record.aplyQlfcCn),
+      sourceUrl: text(record.src_url),
+      clear: Boolean(text(record.aply_qlfc_cn)),
+      eligibility: text(record.aply_qlfc_cn),
+      desc: text(record.ncs_cd_nm_lst),
+      full: text(record.aply_qlfc_cn),
     };
   };
 
@@ -62,9 +62,9 @@
     });
   };
 
-  fetch('./jobs.json')
+  const loadJobs = () => fetch('/api/jobs', { cache: 'no-store' })
     .then((response) => {
-      if (!response.ok) throw new Error('jobs.json을 불러오지 못했습니다.');
+      if (!response.ok) throw new Error('Supabase에서 공고를 불러오지 못했습니다.');
       return response.json();
     })
     .then((records) => {
@@ -87,4 +87,7 @@
       console.error(error);
       cards.innerHTML = '<div class="empty">공고 데이터를 불러오지 못했습니다.</div>';
     });
+
+  loadJobs();
+  setInterval(loadJobs, 60_000);
 })();
